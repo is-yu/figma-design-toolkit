@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_figma_figma__whoami",
+      "mcp__plugin_figma_figma__get_metadata",
+      "mcp__plugin_figma_figma__get_libraries",
+      "mcp__plugin_figma_figma__use_figma",
+      "mcp__plugin_figma_figma__get_screenshot",
+      "mcp__plugin_figma_figma__search_design_system",
+      "mcp__plugin_figma_figma__get_variable_defs"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__plugin_figma_figma__use_figma",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'BLOCKING: Before writing to Figma, confirm: (1) Was reference-interpreter Design Brief confirmed? (2) Are you using search_design_system + importVariableByKeyAsync for ALL colors/text/spacing? (3) Will you run QA audit on returned IDs? If any answer is NO, stop and fix your approach.'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__plugin_figma_figma__use_figma",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'MANDATORY QA: Run the figma-style-binding QA verification script on ALL returned node IDs. Do NOT proceed to next step until all nodes PASS. Any raw {r,g,b} without variable binding = FAIL.'"
+          }
+        ]
+      }
+    ]
+  }
+}
