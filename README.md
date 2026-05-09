@@ -7,6 +7,10 @@ Automate design creation in Figma using your connected design system. Claude Cod
 1. **Claude Code** installed ([claude.ai/code](https://claude.ai/code))
 2. **Figma MCP plugin** configured in Claude Code
 3. A **Figma file** with a design system library connected
+4. A **git repository** in your project directory — the install script requires one. If your project isn't already a git repo, initialize one first:
+   ```bash
+   git init
+   ```
 
 ## Install
 
