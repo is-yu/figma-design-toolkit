@@ -23,13 +23,35 @@ Examine the reference across these dimensions:
 
 ---
 
+## Phase 1.5 — Token Resolution (MANDATORY)
+
+After analyzing the reference, BEFORE mapping or outputting the brief:
+
+1. **Identify every distinct color** used in the reference: backgrounds, text colors, borders, badges, status indicators, chart colors, accents.
+
+2. **Call `search_design_system`** with the connected library key(s) for each color category:
+   - Search for: `traffic`, `graph`, `surface`, `outline`, `error`, `success`, `warning`, `on surface`, `primary`, `secondary`, `tertiary`
+   - Search for any domain-specific terms visible in the reference (e.g. "critical", "high", "medium", "low")
+
+3. **Build a Color Token Map** — a table mapping every color in the reference to its closest DS variable:
+
+   | Element | DS Token | Variable Key |
+   |---------|----------|--------------|
+   | [visual element] | [token name] | [key from search] |
+
+4. **If no match exists** for a color, flag it as a gap in the brief.
+
+This phase is NOT optional. The Design Brief MUST include the resolved Color Token Map. Do NOT output a brief with vague color descriptions like "red" or "green" — every color must resolve to a specific variable name and key.
+
+---
+
 ## Phase 2 — Map to Design System
 
-For each observation, identify the specific Token or Style from the session's Token Map:
+Using the Color Token Map from Phase 1.5 and the session's Token Map from Preflight, map ALL observations to specific tokens:
 
 ```
-"Large dark headline" → Text Style: heading/h1 · Color: text/primary
-"Neutral section bg"  → Variable: background/surface-2
+"Large dark headline" → Text Style: heading/h1 · Color: sys/On Surface
+"Neutral section bg"  → Variable: sys/Surface
 "Tight card spacing"  → Gap: gap/xs · Padding: padding/sm
 ```
 
@@ -57,10 +79,10 @@ Gap: [observation] — no matching token. Options: (a) nearest match: [name], (b
 - Heading: [Style name] — [why]
 - Body: [Style name]
 
-### Colors
-- Background: [Variable] — [context]
-- Text: [Variable]
-- Accent: [Variable] — [used for]
+### Colors (resolved from design system)
+| Element | DS Token | Variable Key |
+|---------|----------|--------------|
+| [from Phase 1.5 Color Token Map] | | |
 
 ### Spacing
 - Section padding: [Variable]

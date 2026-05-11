@@ -114,6 +114,8 @@ Token Map: [summary of roles]
 
 Load and follow `references/reference-interpreter.md` to produce a structured Design Brief.
 
+**Color resolution is mandatory:** Before outputting the brief, call `search_design_system` with the connected library keys to resolve ALL colors in the reference to specific DS variable names and keys. The brief must include a Color Token Map table. Never output a brief with unresolved color descriptions like "red" or "green".
+
 **Hard gate:** Output the Design Brief, then display:
 ```
 Brief complete. Type "confirmed" to begin building, or tell me what to adjust.
