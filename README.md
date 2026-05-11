@@ -1,26 +1,35 @@
-# Figma Design Toolkit for Claude Code
+# Figma Design Toolkit
 
-Automate design creation in Figma using your connected design system. Claude Code builds UI directly in your Figma file, binding every color, text style, and spacing value to your design tokens — no hardcoded values.
+A collection of Figma skills for [Claude Code](https://claude.ai/code). Each skill adds a slash command that integrates Figma's design capabilities directly into your workflow.
+
+## Available Skills
+
+| Skill | Command | Description |
+|-------|---------|-------------|
+| Prototype with DS | `/prototype-with-ds` | Build production-quality Figma designs using your connected design system. Every color, text style, and spacing value is bound to design tokens. |
+
+More skills coming soon.
 
 ## Prerequisites
 
 1. **Claude Code** installed ([claude.ai/code](https://claude.ai/code))
 2. **Figma MCP plugin** configured in Claude Code
-3. A **Figma file** with a design system library connected
-4. A **git repository** in your project directory — the install script requires one. If your project isn't already a git repo, initialize one first:
-   ```bash
-   git init
-   ```
 
 ## Install
 
-From your project directory:
+Paste this repo link in Claude Code and say "install":
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/is-yu/figma-design-toolkit/main/install.sh | bash
+```
+https://github.com/is-yu/figma-design-toolkit
 ```
 
-Or clone and run manually:
+Or run directly from any terminal:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/is-yu/figma-design-toolkit/main/install.sh)
+```
+
+Or clone and run:
 
 ```bash
 git clone https://github.com/is-yu/figma-design-toolkit.git /tmp/fdt
@@ -28,36 +37,37 @@ bash /tmp/fdt/install.sh
 rm -rf /tmp/fdt
 ```
 
-## Getting Started
+## Usage — `/prototype-with-ds`
 
-1. Open Claude Code in your project directory
-2. Type: **`preflight`**
-3. Paste your Figma file URL when prompted
-4. Share a reference (screenshot, URL, or description) of what you'd like to build
-
-## Workflow
+Open Claude Code in **any project** and type:
 
 ```
-preflight → reference brief → confirmed → build → QA
+/prototype-with-ds
+```
+
+You'll be prompted for:
+1. A Figma file URL (must have a design system library connected)
+2. A description of what to build, plus optional reference screenshots or URLs
+
+### Workflow
+
+```
+/prototype-with-ds → preflight → reference brief → confirmed → build → QA
 ```
 
 | Step | What happens |
 |---|---|
+| **Prompt** | Asks for Figma URL + description/references |
 | **Preflight** | Connects to Figma, loads your design system tokens |
 | **Reference** | Analyzes your screenshot/URL, maps to tokens, outputs a Design Brief |
 | **Build** | Constructs in Figma using only your design system (library variables + text styles) |
-| **QA** | Audits every node for proper token binding — fails block progress |
+| **QA** | Audits every node for proper token binding — blocks progress on failures |
 
-## What's Included
+## Uninstall
 
-| File | Purpose |
-|---|---|
-| `.claude/settings.json` | Figma MCP permissions + pre/post safety hooks |
-| `.claude/skills/figma-preflight/` | Session startup, token map loading |
-| `.claude/skills/reference-interpreter/` | Screenshot/URL → structured Design Brief |
-| `.claude/skills/figma-style-binding/` | Enforces design system token binding on every node |
-| `.claude/skills/component-rules/` | Library-first component construction rules |
-| `CLAUDE.md` | Workflow rules and Figma file configuration |
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/is-yu/figma-design-toolkit/main/uninstall.sh)
+```
 
 ## Troubleshooting
 

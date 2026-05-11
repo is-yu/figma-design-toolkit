@@ -1,12 +1,6 @@
----
-name: component-rules
-description: "Triggers when building any UI element in Figma — 'create a card', 'build a nav', 'add a section', 'make a component'. Enforces library-first component lookup, correct Auto Layout structure, and semantic node naming. For visual property binding (colors, text styles, spacing values), defer to figma-style-binding."
-disable-model-invocation: false
----
-
 # Component Rules
 
-Governs how Claude constructs UI in Figma. Supplements `figma-generate-design`. For visual property binding, defer to `figma-style-binding`.
+Governs how to construct UI in Figma. For visual property binding (colors, text styles, spacing values), defer to `style-binding.md`.
 
 ---
 
@@ -20,7 +14,7 @@ Before building anything, resolve the component source in this order:
 3. Build from scratch — ONLY if nothing matches
 ```
 
-Never rebuild primitives the DS provides: Button, Input, Checkbox, Toggle, Badge, Tag, Avatar, Icon, Tab, Breadcrumb, Toast, Alert, Spinner.
+Never rebuild primitives the design system provides: Button, Input, Checkbox, Toggle, Badge, Tag, Avatar, Icon, Tab, Breadcrumb, Toast, Alert, Spinner.
 
 ```js
 // Library import
@@ -69,3 +63,9 @@ One section per `use_figma` call. Validate via screenshot after each step. Retur
 ```js
 return { created: { card: card.id, title: title.id } };
 ```
+
+---
+
+## Rule 5 — Position new top-level nodes
+
+Nodes appended directly to the page default to (0,0). Scan `figma.currentPage.children` to find a clear position (e.g., to the right of the rightmost node). This only applies to page-level nodes — nested nodes are positioned by their parent.

@@ -1,87 +1,98 @@
 #!/bin/bash
 set -e
 
-REPO_URL="https://github.com/is-yu/figma-design-toolkit"
-BRANCH="main"
-
 echo ""
-echo "=== Figma Design Toolkit for Claude Code ==="
+echo "=== Prototype with Design System — Installer ==="
 echo ""
 
-# Validate location
-if [ ! -d ".git" ]; then
-  echo "Warning: No .git found in current directory."
-  read -p "Install here anyway? (y/N) " confirm
-  if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
-    echo "Aborted. Navigate to your project root and try again."
-    exit 1
-  fi
-fi
+SKILL_DIR="$HOME/.claude/skills/prototype-with-ds"
+SETTINGS_FILE="$HOME/.claude/settings.local.json"
 
-# Download to temp
-TMPDIR=$(mktemp -d)
-echo "Downloading toolkit..."
-git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$TMPDIR/toolkit" 2>/dev/null || {
-  echo "Error: Could not download from $REPO_URL"
-  echo "Check that the repository exists and you have access."
-  rm -rf "$TMPDIR"
-  exit 1
-}
+# Determine script location (for local installs) or use temp clone
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Handle existing .claude/settings.json
-if [ -f ".claude/settings.json" ]; then
-  echo "Existing .claude/settings.json found — backing up to .claude/settings.json.backup"
-  cp .claude/settings.json .claude/settings.json.backup
-fi
-
-# Copy .claude structure
-mkdir -p .claude/skills
-cp "$TMPDIR/toolkit/.claude/settings.json" .claude/settings.json
-cp -r "$TMPDIR/toolkit/.claude/skills/figma-preflight" .claude/skills/
-cp -r "$TMPDIR/toolkit/.claude/skills/reference-interpreter" .claude/skills/
-cp -r "$TMPDIR/toolkit/.claude/skills/figma-style-binding" .claude/skills/
-cp -r "$TMPDIR/toolkit/.claude/skills/component-rules" .claude/skills/
-
-# Handle CLAUDE.md
-if [ -f "CLAUDE.md" ]; then
-  echo ""
-  echo "Existing CLAUDE.md found — appending toolkit config."
-  echo "" >> CLAUDE.md
-  echo "---" >> CLAUDE.md
-  echo "" >> CLAUDE.md
-  cat "$TMPDIR/toolkit/CLAUDE.md.template" >> CLAUDE.md
+if [ -f "$SCRIPT_DIR/skill/SKILL.md" ]; then
+  SOURCE_DIR="$SCRIPT_DIR"
 else
-  cp "$TMPDIR/toolkit/CLAUDE.md.template" CLAUDE.md
+  echo "Downloading toolkit..."
+  TEMP_DIR=$(mktemp -d)
+  git clone --quiet --depth 1 https://github.com/is-yu/figma-design-toolkit.git "$TEMP_DIR"
+  SOURCE_DIR="$TEMP_DIR"
+  trap "rm -rf $TEMP_DIR" EXIT
 fi
 
-# Cleanup
-rm -rf "$TMPDIR"
+# 1. Install skill files
+echo "Installing skill to $SKILL_DIR..."
+mkdir -p "$SKILL_DIR/references"
+cp "$SOURCE_DIR/skill/SKILL.md" "$SKILL_DIR/SKILL.md"
+cp "$SOURCE_DIR/skill/references/"*.md "$SKILL_DIR/references/"
 
-# Onboarding output
+# 2. Add Figma MCP permissions to global settings
+echo "Configuring permissions..."
+
+mkdir -p "$HOME/.claude"
+
+if [ ! -f "$SETTINGS_FILE" ]; then
+  echo '{"permissions":{"allow":[]}}' > "$SETTINGS_FILE"
+fi
+
+python3 -c "
+import json
+
+settings_path = '$SETTINGS_FILE'
+perms_to_add = [
+    'mcp__plugin_figma_figma__whoami',
+    'mcp__plugin_figma_figma__get_metadata',
+    'mcp__plugin_figma_figma__get_libraries',
+    'mcp__plugin_figma_figma__use_figma',
+    'mcp__plugin_figma_figma__get_screenshot',
+    'mcp__plugin_figma_figma__search_design_system',
+    'mcp__plugin_figma_figma__get_variable_defs',
+    'mcp__plugin_figma_figma__get_design_context',
+]
+
+try:
+    with open(settings_path, 'r') as f:
+        settings = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    settings = {}
+
+if 'permissions' not in settings:
+    settings['permissions'] = {}
+if 'allow' not in settings['permissions']:
+    settings['permissions']['allow'] = []
+
+existing = set(settings['permissions']['allow'])
+for perm in perms_to_add:
+    if perm not in existing:
+        settings['permissions']['allow'].append(perm)
+
+with open(settings_path, 'w') as f:
+    json.dump(settings, f, indent=2)
+    f.write('\n')
+"
+
+# 3. Success message
 cat << 'EOF'
 
 ============================================
-  Figma Design Toolkit — Installed
+  Prototype with Design System — Installed
 ============================================
 
-What was installed:
-  .claude/settings.json       Figma MCP permissions + safety hooks
-  .claude/skills/             4 skills:
-    figma-preflight           Session startup + token map loading
-    reference-interpreter     Screenshot/URL → Design Brief
-    figma-style-binding       Enforces design system token binding
-    component-rules           Library-first component construction
-  CLAUDE.md                   Workflow rules + Figma file placeholder
+Usage:
+  Open Claude Code in any project and type:
 
-Prerequisites (check before starting):
-  1. Figma MCP plugin must be configured in Claude Code
-     (https://github.com/anthropics/claude-code/wiki/Figma-MCP)
-  2. Your target Figma file needs a design system library connected
+    /prototype-with-ds
 
-Getting started:
-  1. Open Claude Code in this directory
-  2. Type: preflight
-  3. Paste your Figma file URL when prompted
-  4. Share a reference or describe what to build
+  You'll be prompted for:
+    1. A Figma file URL (must have a design system library connected)
+    2. A description of what to build (+ optional reference screenshots)
+
+Prerequisite:
+  Figma MCP plugin must be configured in Claude Code
+  (https://github.com/anthropics/claude-code/wiki/Figma-MCP)
+
+To uninstall:
+  bash <(curl -fsSL https://raw.githubusercontent.com/is-yu/figma-design-toolkit/main/uninstall.sh)
 
 EOF

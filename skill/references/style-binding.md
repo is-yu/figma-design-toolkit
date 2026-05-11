@@ -1,12 +1,6 @@
----
-name: figma-style-binding
-description: "Triggers on any visual property change in Figma — creating text, setting colors, adjusting spacing/padding/gap/radius. Enforces that ALL values bind to Figma Styles or Variables, never hardcoded. Includes post-write QA verification."
-disable-model-invocation: false
----
-
 # Style Binding + QA
 
-Every visual value must come from the design system. Supplements `figma-generate-design`. Prerequisite: `figma-preflight` must have run this session.
+Every visual value must come from the design system. No hardcoded colors, font sizes, or spacing.
 
 ---
 
@@ -16,9 +10,9 @@ Before writing code, verify:
 - [ ] `search_design_system` has been called with the connected library key for needed tokens
 - [ ] Library variables have been imported via `importVariableByKeyAsync`
 - [ ] NO raw color/spacing values will be used — every value will have a binding
-- [ ] The `localhost` collection is NOT being used (it is auto-generated from HTML imports and is NOT the design system)
+- [ ] The `localhost` collection is NOT being used (it is auto-generated and is NOT the design system)
 
-If pre-conditions are not met, DO NOT proceed with the `use_figma` call. Fix your approach first.
+If pre-conditions are not met, DO NOT proceed with the `use_figma` call.
 
 ---
 
@@ -47,7 +41,7 @@ node.textStyleId = "<id>";
 
 If no local style matches, search libraries via `search_design_system`. If no match anywhere:
 ```
-⚠️ Text style gap: no style for "[role]". Available: [top 5]. Use closest, or add missing style?
+Text style gap: no style for "[role]". Available: [top 5]. Use closest, or add missing style?
 ```
 
 ---
@@ -143,7 +137,7 @@ return { auditResults: results };
 
 **Report format:**
 ```
-✅ All [N] nodes passed.
+All [N] nodes passed.
 // or
-❌ FAIL "Card" (FRAME) — paddingTop, cornerRadius unbound. Fixing...
+FAIL "Card" (FRAME) — paddingTop, cornerRadius unbound. Fixing...
 ```

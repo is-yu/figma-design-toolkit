@@ -1,14 +1,6 @@
----
-name: reference-interpreter
-description: "Triggers when user shares a screenshot, image, URL, or design description — or says 'analyze this', 'make a brief', 'interpret this reference'. Outputs a structured Design Brief mapping visual intent to design system tokens. Waits for 'confirmed' before designing."
-disable-model-invocation: false
----
-
 # Reference Interpreter
 
 Analyze a reference (screenshot, URL, or description) and produce a **Design Brief** that maps visual observations to design system tokens. Output the Brief, then **stop and wait for user confirmation** before building anything.
-
-Prerequisite: `figma-preflight` should have run so the Token Map and Style Registry are available.
 
 ---
 
@@ -43,7 +35,7 @@ For each observation, identify the specific Token or Style from the session's To
 
 If no token exists, flag it:
 ```
-⚠️ Gap: [observation] — no matching token. Options: (a) nearest match: [name], (b) add token first.
+Gap: [observation] — no matching token. Options: (a) nearest match: [name], (b) add token first.
 ```
 
 ---
@@ -54,7 +46,7 @@ If no token exists, flag it:
 ## Design Brief
 
 **Reference**: [source]
-**Output**: [Figma file URL with target page/node from CLAUDE.md]
+**Output**: [Figma file URL with target page/node]
 **Section**: [what this covers]
 **Aesthetic**: [3-5 keywords]
 
@@ -89,7 +81,7 @@ If no token exists, flag it:
 Output exactly:
 
 ```
-Brief complete. Type `confirmed` to begin building, or tell me what to adjust.
+Brief complete. Type "confirmed" to begin building, or tell me what to adjust.
 ```
 
-Do NOT call `use_figma` or place any nodes until user types `confirmed`.
+Do NOT call `use_figma` or place any nodes until user confirms.
