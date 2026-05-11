@@ -33,11 +33,13 @@ After analyzing the reference, BEFORE mapping or outputting the brief:
    - Search for: `traffic`, `graph`, `surface`, `outline`, `error`, `success`, `warning`, `on surface`, `primary`, `secondary`, `tertiary`
    - Search for any domain-specific terms visible in the reference (e.g. "critical", "high", "medium", "low")
 
-3. **Build a Color Token Map** — a table mapping every color in the reference to its closest DS variable:
+3. **Resolve hex values** — after identifying tokens, run a single `use_figma` call to import each variable and read its resolved color value from the first mode. Convert `{r, g, b}` (0–1 range) to hex (`#RRGGBB`). If the value is a `VARIABLE_ALIAS`, follow one level to resolve.
 
-   | Element | DS Token | Variable Key |
-   |---------|----------|--------------|
-   | [visual element] | [token name] | [key from search] |
+4. **Build a Color Token Map** — a table mapping every color in the reference to its closest DS variable WITH the resolved hex:
+
+   | Element | DS Token | Hex | Variable Key |
+   |---------|----------|-----|--------------|
+   | [visual element] | [token name] | [#RRGGBB] | [key from search] |
 
 4. **If no match exists** for a color, add it to the **Unresolved Tokens** list with this exact format:
 
@@ -89,9 +91,9 @@ Gap: [observation] — no matching token. Options: (a) nearest match: [name], (b
 - Body: [Style name]
 
 ### Colors (resolved from design system)
-| Element | DS Token | Variable Key |
-|---------|----------|--------------|
-| [from Phase 1.5 Color Token Map] | | |
+| Element | DS Token | Hex | Variable Key |
+|---------|----------|-----|--------------|
+| [from Phase 1.5 Color Token Map — must include hex values] | | | |
 
 ### Spacing
 - Section padding: [Variable]
