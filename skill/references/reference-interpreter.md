@@ -39,7 +39,16 @@ After analyzing the reference, BEFORE mapping or outputting the brief:
    |---------|----------|--------------|
    | [visual element] | [token name] | [key from search] |
 
-4. **If no match exists** for a color, flag it as a gap in the brief.
+4. **If no match exists** for a color, add it to the **Unresolved Tokens** list with this exact format:
+
+   ```
+   ⚠️ NO MATCHING TOKEN: [element description]
+      Searched: [queries tried]
+      Nearest match: [closest token name] — [how it differs]
+      Action needed: (a) use nearest match, (b) skip this element, (c) create a new token
+   ```
+
+   Each unresolved token MUST appear both in the Color Token Map (with "⚠️ UNRESOLVED" in the Variable Key column) AND in a dedicated warnings section placed BEFORE the "confirmed" prompt.
 
 This phase is NOT optional. The Design Brief MUST include the resolved Color Token Map. Do NOT output a brief with vague color descriptions like "red" or "green" — every color must resolve to a specific variable name and key.
 
@@ -92,18 +101,35 @@ Gap: [observation] — no matching token. Options: (a) nearest match: [name], (b
 - [Name]: [from library? source]
 
 ### Gaps
-- [Gap description] — awaiting decision
-- (none) [if all mapped]
+- (none) [if all tokens resolved]
+```
+
+**If there ARE unresolved tokens**, append this block immediately after the brief (outside the code block):
+
+```
+---
+⚠️ UNRESOLVED TOKENS ([N] items)
+
+[repeat each unresolved token warning from Phase 1.5 step 4]
+
+These elements cannot be built with design system binding until resolved.
+Please choose an option (a/b/c) for each, or tell me how to handle them.
+---
 ```
 
 ---
 
 ## Phase 4 — Wait
 
-Output exactly:
-
+**If all tokens resolved:**
 ```
 Brief complete. Type "confirmed" to begin building, or tell me what to adjust.
+```
+
+**If unresolved tokens exist:**
+```
+Brief complete, but [N] token(s) could not be matched to the design system (see warnings above).
+Please resolve each ⚠️ item before confirming. Type your choices, or "confirmed" if you want to skip them.
 ```
 
 Do NOT call `use_figma` or place any nodes until user confirms.
