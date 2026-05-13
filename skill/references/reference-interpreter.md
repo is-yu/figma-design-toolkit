@@ -56,6 +56,35 @@ This phase is NOT optional. The Design Brief MUST include the resolved Color Tok
 
 ---
 
+## Phase 1.7 — Component Resolution (MANDATORY)
+
+After resolving colors, BEFORE mapping or outputting the brief:
+
+1. **Identify every UI component** visible in the reference: cards, buttons, badges, chips, inputs, dropdowns, icons, navigation elements, etc.
+
+2. **Call `search_design_system`** with the connected library key(s) for each component type:
+   - Search for: `card`, `button`, `chip`, `badge`, `status`, `delta`, `icon`, `menu`, `dropdown`, `input`, `select`
+   - Search for any domain-specific component terms visible in the reference (e.g. "risk level", "capability", "percentage marker")
+
+3. **Build a Component Binding Map** — a table mapping every UI element in the reference to its closest DS component:
+
+   | UI Element | DS Component | Component Key |
+   |------------|-------------|---------------|
+   | [visual element] | [component name] | [key from search] |
+
+4. **If no match exists** for a component, flag it:
+
+   ```
+   ⚠️ NO MATCHING COMPONENT: [element description]
+      Searched: [queries tried]
+      Nearest match: [closest component name] — [how it differs]
+      Action needed: (a) use nearest match, (b) build from primitives with DS tokens, (c) skip
+   ```
+
+This phase is NOT optional. The Design Brief MUST include the Component Binding Map. Do NOT list components as "custom" or "to be built" without first searching the design system. Always prefer importing existing library components over building from scratch.
+
+---
+
 ## Phase 2 — Map to Design System
 
 Using the Color Token Map from Phase 1.5 and the session's Token Map from Preflight, map ALL observations to specific tokens:
@@ -99,8 +128,10 @@ Gap: [observation] — no matching token. Options: (a) nearest match: [name], (b
 - Section padding: [Variable]
 - Internal gap: [Variable]
 
-### Components needed
-- [Name]: [from library? source]
+### Components (from design system)
+| UI Element | DS Component | Component Key |
+|------------|-------------|---------------|
+| [from Phase 1.7 Component Binding Map] | | |
 
 ### Gaps
 - (none) [if all tokens resolved]

@@ -116,6 +116,8 @@ Load and follow `references/reference-interpreter.md` to produce a structured De
 
 **Color resolution is mandatory:** Before outputting the brief, call `search_design_system` with the connected library keys to resolve ALL colors in the reference to specific DS variable names and keys. The brief must include a Color Token Map table. Never output a brief with unresolved color descriptions like "red" or "green".
 
+**Component resolution is mandatory:** Before outputting the brief, call `search_design_system` with the connected library keys to find matching DS components for ALL UI elements in the reference. The brief must include a Component Binding Map table. Always prefer importing existing library components over building from scratch.
+
 **Hard gate:** Output the Design Brief, then display:
 ```
 Brief complete. Type "confirmed" to begin building, or tell me what to adjust.
